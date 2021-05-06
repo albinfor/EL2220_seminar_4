@@ -1,0 +1,51 @@
+%% Problem 1.2
+clc; clear;
+x_max = 2000;
+x = linspace(0,x_max)';
+x_norm = x/x_max;
+
+x_weight = [0,0.3,0.45,1];
+y_weight = [0,-0.03, 0.01 ,0];
+p = polyfit(x_weight, y_weight, 3);
+
+x_reweigh = @(x) (1+polyval(p,x)).*x;
+
+f_r = @(x) 3713.7.*(x.^2.*(1-x));
+x_growth = f_r(x_reweigh(x_norm));
+figure(1)
+plot(x_norm,x_growth);
+grid on
+
+
+c_1 = 30;
+c_2 = 0.0025;
+f_e = @(x) c_1*(c_2*x)./(1+(c_2*x));
+x_loss = f_e(x);
+figure(2)
+plot(x_norm,x_loss);
+axis([0 1 0 28])
+
+
+
+
+
+
+function x_out = f_r(x_in)
+    x_out = [];
+    for i = 1:length(x_in)
+        x = x_in(i)
+        disp(x)
+        if x<0.2
+            x_add = polyval([500,0],x); 
+        elseif x<0.4
+            x_add = polyval([1000,-100],x);
+        elseif x<0.5
+            x_add = polyval([2000,-500],x);
+        elseif x<0.7
+            x_add = polyval([-6000,7100,-1550],x);
+        else
+            x_add = polyval([-1600,1600],x);
+        end
+        x_out = [x_out; x_add];
+    end
+end
